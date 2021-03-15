@@ -49,8 +49,8 @@ app.use((error, req, res, next) => {
 })
 
 mongoose.connect(
-        // Add mongodb uri 
-    )
+    'mongodb+srv://Daniel:test123@cluster0.dizsj.mongodb.net/messages?retryWrites=true&w=majority'
+)
     .then(result => {
         app.listen(8000)
     })
