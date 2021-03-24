@@ -3,6 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const multer = require('multer')
+const cors = require('cors')
 
 const feedRoutes = require('./routes/feed')
 const authRoutes = require('./routes/auth')
@@ -25,7 +26,7 @@ const fileFilter = (req, file, cb) => {
         cb(null, false)
     }
 }
-
+app.use(cors());
 app.use(bodyParser.json())
 app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'))
 app.use('/images', express.static(path.join(__dirname, 'images')))
@@ -48,10 +49,15 @@ app.use((error, req, res, next) => {
      res.status(status).json({ message: message, data: data })
 })
 
-mongoose.connect(
-    'mongodb+srv://Daniel:test123@cluster0.dizsj.mongodb.net/messages?retryWrites=true&w=majority'
-)
+    mongoose
+    .connect(
+      'mongodb+srv://Daniel:test123@cluster0.dizsj.mongodb.net/messages?retryWrites=true&w=majority'
+    )
     .then(result => {
-        app.listen(8000)
+      const server = app.listen(8000);
+      const io = require('./socket').init(server);
+      io.on('connection', socket => {
+        console.log('Client connected');
+      });
     })
-    .catch(err => console.log(err))
+    .catch(err => console.log(err));
