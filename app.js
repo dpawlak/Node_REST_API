@@ -88,7 +88,7 @@ app.use((error, req, res, next) => {
       'mongodb+srv://Daniel:test123@cluster0.dizsj.mongodb.net/messages?retryWrites=true&w=majority'
     )
     .then(result => {
-      app.listen(8000);
+      app.listen(process.env.PORT || 8000);
     })
     .catch(err => console.log(err));
 
